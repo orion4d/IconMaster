@@ -27,13 +27,15 @@ Accédez à la version visuelle de la galerie :
 - **Licence** : [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
 - **Usage** : usage libre, pas de revente du visuel
 
+<div align="center">
 
-<p><strong>Made with ❤️ for the open source community</strong></p>
+### 🌟 **Soutenez le projet**
 
-<p><strong>by Orion4D</strong></p>
+Si ce projet vous a été utile, pensez à lui laisser une ⭐ sur GitHub !
 
-<a href="https://ko-fi.com/orion4d">
-<img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Buy Me A Coffee" height="41" width="174">
-</a>
+**Fait avec ❤️ pour la communauté open source**  
+**par Orion4D**
+
+[![Offrez-moi un café](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/orion4d)
 
 </div>
