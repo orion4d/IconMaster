@@ -1,0 +1,120 @@
+from pathlib import Path
+
+# === Configuration ===
+folder = Path("docs")
+output_html = folder / "index.html"
+output_md = folder / "info.md"
+images = sorted(f.name for f in folder.glob("*.png"))
+
+# === HTML complet ===
+html = f"""<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>Icon Gallery</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <style>
+    body {{ font-family: sans-serif; max-width: 1200px; margin: auto; padding: 2em; background: #f9f9f9; }}
+    h1 {{ text-align: center; }}
+    #controls {{ text-align: center; margin-bottom: 1em; }}
+    #search {{ padding: 0.5em; width: 50%; font-size: 1em; }}
+    #contains-toggle {{ margin-left: 1em; }}
+    .gallery {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1em; }}
+    .icon-card {{ text-align: center; transition: transform 0.3s; }}
+    .icon-card:hover {{ transform: scale(1.2); }}
+    .icon-card img {{ width: 100%; max-width: 256px; border-radius: 8px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }}
+    .icon-name {{ font-size: 0.85em; margin-top: 0.3em; color: #333; }}
+    footer {{ text-align: center; margin-top: 3em; font-size: 0.9em; color: #555; }}
+    #modal {{
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8); justify-content: center; align-items: center;
+      z-index: 1000;
+    }}
+    #modal img {{ max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 20px black; }}
+  </style>
+</head>
+<body>
+  <h1>Icon Gallery</h1>
+  <div id="controls">
+    <input type='text' id='search' placeholder='Search icons by filename...'>
+    <label><input type='checkbox' id='contains-toggle'> Rechercher partout</label>
+  </div>
+  <div class='gallery' id='gallery'></div>
+  <footer>
+    <p><strong>Author:</strong> Philippe Joye<br>
+    <strong>License:</strong> <a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></p>
+    <p><a href='info.md'>Voir les infos détaillées (info.md)</a></p>
+  </footer>
+  <div id='modal' onclick='this.style.display="none"'>
+    <img id='modal-img' src='' alt=''>
+  </div>
+  <script>
+    const images = {images};
+    const gallery = document.getElementById('gallery');
+
+    function createCard(filename) {{
+      const card = document.createElement('div');
+      card.className = 'icon-card';
+      card.setAttribute('data-name', filename.toLowerCase());
+      const img = document.createElement('img');
+      img.src = filename;
+      img.alt = filename;
+      img.onclick = () => showModal(filename);
+      const caption = document.createElement('div');
+      caption.className = 'icon-name';
+      caption.textContent = filename;
+      card.appendChild(img);
+      card.appendChild(caption);
+      return card;
+    }}
+
+    function showModal(src) {{
+      const modal = document.getElementById('modal');
+      const modalImg = document.getElementById('modal-img');
+      modalImg.src = src;
+      modal.style.display = 'flex';
+    }}
+
+    function updateGallery(filter = '') {{
+      const useContains = document.getElementById('contains-toggle').checked;
+      gallery.innerHTML = '';
+      images
+        .filter(name =>
+          useContains
+            ? name.toLowerCase().includes(filter)
+            : name.toLowerCase().startsWith(filter)
+        )
+        .forEach(name => gallery.appendChild(createCard(name)));
+    }}
+
+    document.getElementById('search').addEventListener('input', (e) => {{
+      updateGallery(e.target.value.trim().toLowerCase());
+    }});
+    document.getElementById('contains-toggle').addEventListener('change', () => {{
+      const filter = document.getElementById('search').value.trim().toLowerCase();
+      updateGallery(filter);
+    }});
+
+    updateGallery();
+  </script>
+</body>
+</html>
+"""
+
+output_html.write_text(html, encoding="utf-8")
+
+# === Markdown info file
+md_lines = [
+    "# Informations sur les icônes",
+    "Ce fichier liste toutes les icônes présentes dans ce dossier avec leurs informations de licence.",
+    "---"
+]
+
+for img in images:
+    md_lines.append(f"## {img}")
+    md_lines.append(f"- **Nom du fichier** : `{img}`")
+    md_lines.append(f"- **Auteur** : Philippe Joye")
+    md_lines.append(f"- **Licence** : [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)")
+    md_lines.append(f"- **Usage** : usage libre, pas de revente du visuel\n")
+
+output_md.write_text("\n".join(md_lines), encoding="utf-8")
